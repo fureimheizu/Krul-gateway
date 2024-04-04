@@ -45,7 +45,7 @@ app.use((req: Request, res: Response, next) => {
     }
 });
 
-app.post('/register', cors(registerCorsMiddleware), (req: Request, res: Response) => {
+app.post('/gateway-register-service', cors(registerCorsMiddleware), (req: Request, res: Response) => {
     const { name, url } = req.body;
     registeredServices[name] = { url, isHealthy: true };
     res.status(200).json({

@@ -1,9 +1,13 @@
-import cors from 'cors'
+import { Request } from 'express';
 
-const registerCorsMiddleware: cors.CorsOptionsDelegate = (req, callback) => {
-    const requestOrigin = req.headers.origin as string;
+const allowedOrigins = ['localhost', '127.0.0.1', '::1'];
 
-    if(requestOrigin && requestOrigin.startsWith('http://localhost')) {
+// I guess it works
+
+const registerCorsMiddleware = (req: Request, callback: any) => {
+    const requestOrigin = req.hostname
+    
+    if(requestOrigin && allowedOrigins.includes(requestOrigin)) {
         callback(null, { origin: true });
     } else {
         callback(new Error('Not allowed by CORS'));
