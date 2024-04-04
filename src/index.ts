@@ -20,7 +20,7 @@ app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
 
-app.use((req: Request, res: Response, next) => {
+app.use(async (req: Request, res: Response, next) => {
     const serviceName = req.path.split('/')[1];
 
     if (req.path === '/gateway-register-service') {
@@ -30,18 +30,28 @@ app.use((req: Request, res: Response, next) => {
     } else if (registeredServices[serviceName] && registeredServices[serviceName].isHealthy) {
         const serviceUrl = registeredServices[serviceName].url;
 
-        axios({
-            method: req.method,
-            url: `${serviceUrl}${req.path}`,
-            data: req.body,
-            headers: req.headers
-        }).then((response) => {
-            res.status(response.status).json(response.data);
-        }).catch((err) => {
-            res.status(500).send({ status: 'error', message: 'Service unavailable.' });
-        });
+        try {
+            const response = await axios({
+                method: req.method,
+                url: req.path,
+                baseURL: serviceUrl,
+                data: req.body,
+                timeout: 20000,
+                headers: req.headers
+            })
+
+            if (response && response.status) {
+                res.status(response.status).json(response.data);
+            } else {
+                res.status(500).send({ status: 'error', message: 'Service unavailable.' });
+            }
+        } catch (error) {
+            console.error("Error", error);
+            res.status(500).send({ status: 'error', message: 'An error occurred while making the request.' });
+        }
     } else {
         res.status(503).send({ status: 'error', message: 'Service is currently offline.' });
+        return
     }
 });
 

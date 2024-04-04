@@ -13,7 +13,7 @@ const checkService = async (services: ServiceInterface) => {
     }
     
     for (const serviceName in services) {
-        let serviceUrl = `${services[serviceName].url}/health`;
+        let serviceUrl = `${services[serviceName].url}/${serviceName}/health`;
         try {
             console.log(`[SERVICE CHECK]: Sending heartbeat to service ${serviceName} at ${serviceUrl}`)
             let response = await axios.get(serviceUrl);
