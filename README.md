@@ -14,3 +14,10 @@ axios({
   }
 });
 ```
+
+To Do:
+
+- [x] Handle service registration
+- [ ] API Key authentication
+- [ ] Rate-limiting requests
+- [ ] Better heartbeat for registered services
