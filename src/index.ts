@@ -5,6 +5,7 @@ import axios from 'axios';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import registerCorsMiddleware from './utils/registerCorsOptions';
 
 const app = express();
 const port = 5201;
@@ -42,7 +43,7 @@ app.use((req: Request, res: Response, next) => {
     }
 });
 
-app.post('/register', (req: Request, res: Response) => {
+app.post('/register', cors(registerCorsMiddleware), (req: Request, res: Response) => {
     const { name, url } = req.body;
     registeredServices[name] = { url, isHealthy: true };
     res.status(200).json({
