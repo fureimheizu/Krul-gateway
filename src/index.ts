@@ -6,10 +6,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import registerCorsMiddleware from './utils/registerCorsOptions';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
-const port = 5201;
-const SERVICE_CHECK_INTERVAL = 10000;
+const port = process.env.SERVICE_PORT || 5201;
+const SERVICE_CHECK_INTERVAL = parseInt(process.env.SERVICE_HEARTBEAT_INTERVAL as string) || 60000;
 
 const registeredServices: ServiceInterface = {};
 
@@ -21,7 +23,7 @@ app.use(express.json());
 app.use((req: Request, res: Response, next) => {
     const serviceName = req.path.split('/')[1];
 
-    if (req.path === '/register') {
+    if (req.path === '/gateway-register-service') {
         next();
     } else if (!registeredServices[serviceName]) {
         return res.status(404).json({ status: 'error', message: 'Service not found.' })

@@ -8,9 +8,14 @@ const ServiceHealthCheck = (interval: number, services: ServiceInterface) => {
 }
 
 const checkService = async (services: ServiceInterface) => {
+    if (Object.keys(services).length === 0) {
+        return;
+    }
+    
     for (const serviceName in services) {
         let serviceUrl = `${services[serviceName].url}/health`;
         try {
+            console.log(`[SERVICE CHECK]: Sending heartbeat to service ${serviceName} at ${serviceUrl}`)
             let response = await axios.get(serviceUrl);
             if (response.status >= 200 && response.status < 300) {
                 console.log(`[SERVICE CHECK]: Service ${serviceName} is healthy.`);
